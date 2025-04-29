@@ -1,18 +1,29 @@
 import React, { use } from 'react';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import { AuthContext } from '../../contexts/AuthContext';
+
 
 
 const Navbar = () => {
 
-    const userInfo = use(AuthContext)
-    console.log(userInfo)
-  
+    const { user, logOutUser } = use(AuthContext)
+    console.log('this is user', user)
+
+    const handleSignOut = () => {
+        logOutUser()
+            .then(() => {
+console.log('sign out')
+            }).catch(error => console.log(error))
+    }
+
 
     const links = <>
         <li><NavLink className={({ isActive }) => isActive ? 'underline' : ''} to='/'>Home</NavLink></li>
         <li><NavLink className={({ isActive }) => isActive ? 'underline' : ''} to='/login'>Login</NavLink></li>
         <li><NavLink className={({ isActive }) => isActive ? 'underline' : ''} to='/signUp'>SignUp</NavLink></li>
+        {
+            user && <li><NavLink className={({ isActive }) => isActive ? 'underline' : ''} to='/orders'>Orders</NavLink></li>
+        }
     </>
     return (
         <div className="navbar bg-base-100 shadow-sm">
@@ -35,7 +46,10 @@ const Navbar = () => {
                 </ul>
             </div>
             <div className="navbar-end">
-                <a className="btn">Button</a>
+                {user ? <>
+                    <span>{ user.email}</span>
+                    <a onClick={handleSignOut} className="btn">SignOut</a> 
+                </> : <Link to='/login'>Login</Link>}
             </div>
         </div>
     );
